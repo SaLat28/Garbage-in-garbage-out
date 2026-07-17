@@ -364,7 +364,7 @@ function flagsOf(sc){
   if(!on('additive')) f.push(['info',`Additive elements skipped.`,
      `Harder to tell a fresh top-up from genuine wear.`]);
   const ironB=sc.f['element_analysis_iron'][2]-sc.f['element_analysis_iron'][1];
-  if(on('wear')&&ironB>10) f.push(['crit',`Iron forecast is ±${(ironB/2).toFixed(0)} ppm wide.`,
+  if(on('wear')&&ironB>16) f.push(['crit',`Iron forecast is ±${(ironB/2).toFixed(0)} ppm wide.`,
      `That's not a prediction — it's the model shrugging.`]);
   if(f.length===0) f.push(['ok',`Full lab panel and a solid history.`,
      `The model has everything it needs — this is a read you can plan around.`]);
