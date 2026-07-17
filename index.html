@@ -380,7 +380,9 @@ function render(){
   const score=trustScore(sc.cov), v=verdictOf(score);
   const vd=el('verdict'); vd.className='verdict '+v.c;
   el('vnum').textContent=score; el('vhead').textContent=v.h;
-  el('vsay').textContent = `${Math.round(sc.cov*100)}% of the model's inputs present · `
+  const covRef=(M().scenarios[nearest(M().ks,N)+"_"+((1<<NG)-1)]||{}).cov||0.7;
+  const covPct=Math.round(Math.min(sc.cov/covRef,1)*100);   // relative to the full lab panel → 100% when all tests on
+  el('vsay').textContent = `${covPct}% of the lab panel run · `
     + `${state.k} sample${state.k>1?'s':''} of history`;
   const mt=el('vmeter'); mt.style.width=score+'%';
   mt.style.background = v.c==='good'?'var(--good)':v.c==='warn'?'var(--warn)':'var(--bad)';
