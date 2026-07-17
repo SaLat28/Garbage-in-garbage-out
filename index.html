@@ -325,8 +325,14 @@ function applyState(){
 /* ---------- lookup + derived ---------- */
 function scenario(){ return M().scenarios[state.k+"_"+state.mask]; }
 function trustScore(cov){
-  const hist=Math.min(state.k/8,1);          // 8+ samples ≈ enough to read a trend
-  return Math.round(100*(0.6*cov+0.4*hist));
+  const N=Nof();
+  // coverage normalised against a full lab panel for THIS asset, so all-tests reads ~100%
+  const covRef=(M().scenarios[nearest(M().ks,N)+"_"+((1<<NG)-1)]||{}).cov || 0.7;
+  const covN=Math.min(cov/covRef,1);
+  // history: fast credit for the first ~6 samples, then keeps climbing to ~80% of the
+  // record — so dragging the slider moves the score across its whole range, not just to 8
+  const hist=0.55*Math.min(state.k/6,1)+0.45*Math.min(state.k/(0.8*N),1);
+  return Math.round(100*(0.5*covN+0.5*hist));
 }
 function verdictOf(score){
   if(score>=70) return {c:'good',h:'A forecast you can act on'};
