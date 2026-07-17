@@ -31,28 +31,25 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
-    line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 48px}
-  header.top{margin-bottom:22px}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--accent);font-weight:600;margin:0 0 8px}
-  h1{font-size:clamp(24px,3.4vw,34px);line-height:1.12;margin:0 0 10px;font-weight:750;
-    letter-spacing:-.01em;text-wrap:balance}
-  .lede{font-size:15.5px;color:var(--ink-2);max-width:70ch;margin:0}
-  .lede b{color:var(--ink);font-weight:650}
+    line-height:1.45;-webkit-font-smoothing:antialiased;
+    display:flex;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+  /* fixed 1280x720 canvas — everything lives inside, nothing scrolls the page */
+  .wrap{width:1280px;height:720px;flex:none;padding:12px 18px 14px;position:relative;
+    display:flex;flex-direction:column;overflow:hidden}
+  header.top{flex:none;margin-bottom:8px}
+  h1{font-size:19px;line-height:1.15;margin:0;font-weight:750;letter-spacing:-.01em}
 
-  .grid{display:grid;grid-template-columns:330px 1fr;gap:20px;align-items:start;margin-top:24px}
-  @media (max-width:880px){.grid{grid-template-columns:1fr}}
+  .grid{flex:1;min-height:0;display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:stretch}
 
   .card{background:var(--surface);border:1px solid var(--hair);border-radius:14px;
     box-shadow:var(--shadow)}
-  aside.panel{padding:18px 18px 20px;position:sticky;top:16px}
-  @media (max-width:880px){aside.panel{position:static}}
+  aside.panel{padding:12px 13px;overflow-y:auto;min-height:0}
+  .grid>section{min-height:0;display:flex;flex-direction:column;gap:9px}
   .panel h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
     font-family:var(--mono);font-weight:600;margin:0 0 14px}
   .panel .sub{margin:22px 0 12px}
 
-  .mpick{width:100%;font-family:var(--mono);font-size:13px;padding:9px 11px;margin:0 0 10px;
+  .mpick{width:100%;font-family:var(--mono);font-size:12.5px;padding:7px 11px;margin:0 0 7px;
     border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
     cursor:pointer;-webkit-appearance:none;appearance:none;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
@@ -70,25 +67,25 @@
   .krow .lab b{color:var(--accent);font-family:var(--mono);font-size:18px;font-weight:700}
   .krow .val{font-family:var(--mono);font-weight:650;font-size:15px}
   .krow .val b{color:var(--accent);font-size:20px}
-  input[type=range]{width:100%;accent-color:var(--accent);height:26px;cursor:pointer}
+  input[type=range]{width:100%;accent-color:var(--accent);height:22px;cursor:pointer;margin:0}
 
   /* toggles */
   .tests{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-  .test{display:flex;gap:11px;align-items:flex-start;padding:9px 8px;border-radius:9px;
+  .test{display:flex;gap:10px;align-items:flex-start;padding:5px 7px;border-radius:8px;
     cursor:pointer;transition:background .12s}
   .test:hover{background:var(--surface-2)}
-  .test input{margin:2px 0 0;width:17px;height:17px;accent-color:var(--accent);cursor:pointer;flex:none}
-  .test .tx .t{font-size:13.5px;font-weight:600;line-height:1.25}
+  .test input{margin:1px 0 0;width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:none}
+  .test .tx .t{font-size:12.5px;font-weight:600;line-height:1.2}
   .test .tx .d{font-size:11.5px;color:var(--muted);line-height:1.3}
   .test.off .tx .t{color:var(--muted);font-weight:500}
   .test.off .tx .t::after{content:" — skipped";color:var(--bad);font-weight:600;font-size:11px}
   .allrow{border-bottom:1px solid var(--hair);border-radius:0;margin-bottom:4px}
   .allrow .t{font-weight:700;color:var(--ink-2);font-size:11.5px}
 
-  .panel h2.scen{color:var(--ink);font-size:14px;text-transform:none;letter-spacing:0;
-    font-family:var(--sans);font-weight:750;margin:22px 0 10px}
+  .panel h2.scen{color:var(--ink);font-size:13px;text-transform:none;letter-spacing:0;
+    font-family:var(--sans);font-weight:750;margin:12px 0 6px}
   .panel h2.scen:first-child{margin-top:0}
-  .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+  .presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
   .preset{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:6px 10px;
     border-radius:999px;border:1px solid var(--pc,var(--line));background:transparent;
     color:var(--pc,var(--ink-2));cursor:pointer;transition:.12s}
@@ -96,53 +93,52 @@
   .preset.on{background:var(--pc,var(--accent));border-color:var(--pc,var(--accent));color:#fff}
 
   /* verdict */
-  .verdict{padding:16px 18px;display:flex;gap:16px;align-items:center;border-radius:14px;
+  .verdict{padding:9px 14px;display:flex;gap:13px;align-items:center;border-radius:12px;flex:none;
     border:1px solid;transition:background .2s,border-color .2s}
   .verdict.good{background:var(--good-bg);border-color:var(--good)}
   .verdict.warn{background:var(--warn-bg);border-color:var(--warn)}
   .verdict.bad{background:var(--bad-bg);border-color:var(--bad)}
-  .vscore{flex:none;width:92px;text-align:center}
-  .vscore .num{font-family:var(--mono);font-size:34px;font-weight:750;line-height:1}
-  .vscore .cap{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);
-    font-family:var(--mono);margin-top:3px}
+  .vscore{flex:none;width:66px;text-align:center}
+  .vscore .num{font-family:var(--mono);font-size:26px;font-weight:750;line-height:1}
+  .vscore .cap{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);
+    font-family:var(--mono);margin-top:2px}
   .good .vscore .num{color:var(--good)} .warn .vscore .num{color:var(--warn)} .bad .vscore .num{color:var(--bad)}
-  .vbody .headline{font-size:17px;font-weight:700;margin:0 0 2px;letter-spacing:-.01em}
+  .vbody .headline{font-size:14px;font-weight:700;margin:0 0 1px;letter-spacing:-.01em}
   .good .vbody .headline{color:var(--good)} .warn .vbody .headline{color:var(--warn)} .bad .vbody .headline{color:var(--bad)}
-  .vbody .say{font-size:13px;color:var(--ink-2);margin:0}
+  .vbody .say{font-size:12px;color:var(--ink-2);margin:0}
 
-  .meter{height:8px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin-top:11px}
+  .meter{height:7px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin-top:6px}
   .meter i{display:block;height:100%;border-radius:6px;transition:width .3s,background .3s}
 
-  .flags{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
-  .flag{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--ink-2);
-    padding:9px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--hair)}
+  .flags{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;
+    flex:none;max-height:96px;overflow-y:auto}
+  .flag{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--ink-2);
+    padding:5px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--hair)}
   .flag .dot{flex:none;width:9px;height:9px;border-radius:50%;margin-top:5px}
   .flag.crit .dot{background:var(--bad)} .flag.warn .dot{background:var(--warn)}
   .flag.info .dot{background:var(--muted)} .flag.ok .dot{background:var(--good)}
   .flag b{color:var(--ink)}
 
-  .charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-  @media (max-width:720px){.charts{grid-template-columns:1fr}}
-  .chart{padding:16px 16px 12px}
-  .chart .ct{font-size:14px;font-weight:650;margin:0 0 2px}
-  .chart .cs{font-size:12px;color:var(--muted);margin:0 0 6px}
+  .charts{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;gap:10px}
+  .chart{padding:7px 11px 6px;min-height:0;display:flex;flex-direction:column}
+  .chart .ct{font-size:12.5px;font-weight:650;margin:0 0 1px}
+  .chart .cs{font-size:10px;color:var(--muted);margin:0 0 2px;line-height:1.2}
   .stat{font-family:var(--mono)}
-  svg{display:block;width:100%;height:auto;overflow:visible}
+  svg{display:block;overflow:visible}
+  .chart svg{flex:1;min-height:0;width:100%;height:100%}
   svg text{font-family:var(--mono)}
-  .tabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}
-  .tab{font-family:var(--mono);font-size:11.5px;padding:5px 9px;border-radius:7px;cursor:pointer;
+  .tabs{display:flex;gap:5px;margin:0 0 3px;flex-wrap:wrap}
+  .tab{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;
     border:1px solid var(--line);background:transparent;color:var(--ink-2)}
   .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
-  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2);margin-top:8px}
-  .legend span{display:inline-flex;gap:6px;align-items:center}
-  .legend .k{width:14px;height:3px;border-radius:2px;display:inline-block}
-  .legend .kd{width:14px;border-top:2px dashed var(--muted);display:inline-block}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--ink-2);margin-top:3px}
+  .legend span{display:inline-flex;gap:5px;align-items:center}
+  .legend .k{width:13px;height:3px;border-radius:2px;display:inline-block;flex:none}
+  .legend .kd{width:13px;border-top:2px dashed var(--muted);display:inline-block}
 
-  footer.note{margin-top:26px;font-size:12px;color:var(--muted);max-width:80ch}
-  footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);
-    padding:1px 5px;border-radius:4px;color:var(--ink-2)}
-  .themebtn{position:fixed;top:14px;right:14px;font-family:var(--mono);font-size:11px;
-    padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  .themebtn{position:absolute;top:10px;right:16px;font-family:var(--mono);font-size:11px;
+    padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
     color:var(--ink-2);cursor:pointer;z-index:5}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -150,11 +146,7 @@
 <button class="themebtn" id="themebtn" type="button">◐ theme</button>
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow">Fluid forecast · model reliability sandbox</p>
     <h1>Garbage in, garbage out — build the dataset, watch the forecast</h1>
-    <p class="lede"><b>Pick an asset</b>, then strip its data down — take fewer oil samples, skip lab
-      tests — and watch the <b>same trained model</b> try to forecast it. The panel on the right tells
-      you how far you can trust what comes back, and why.</p>
   </header>
 
   <div class="grid">
@@ -235,15 +227,6 @@
       </div>
     </section>
   </div>
-
-  <footer class="note">
-    Every number here is a real output of the <b>trained model</b> — a pooled
-    HistGradient­Boosting survival &amp; forecasting model — precomputed over every combination these
-    controls can make (each asset × sample counts × 7 test toggles) and looked up live; the browser
-    can't run the model, so it can't fake one either. This is a public demo: every asset here is <b>synthetic</b>, with invented data — no real customer’s information is shown. Explore how the model’s forecast and reliability shift as you add or withhold data.
-    Trust score blends how complete the lab panel is with how much history the model has to learn a
-    trend from.
-  </footer>
 </div>
 
 <script>
