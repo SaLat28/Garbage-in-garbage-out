@@ -67,6 +67,7 @@
   /* slider */
   .krow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
   .krow .lab{font-size:13px;color:var(--ink-2)}
+  .krow .lab b{color:var(--accent);font-family:var(--mono);font-size:18px;font-weight:700}
   .krow .val{font-family:var(--mono);font-weight:650;font-size:15px}
   .krow .val b{color:var(--accent);font-size:20px}
   input[type=range]{width:100%;accent-color:var(--accent);height:26px;cursor:pointer}
@@ -169,8 +170,7 @@
 
       <h2 class="scen">Samples collected</h2>
       <div class="krow">
-        <span class="lab">how much history the model gets</span>
-        <span class="val"><b id="kval">21</b> <span id="kmax">/ 21</span></span>
+        <span class="lab" id="khist">Asset history: <b>21</b>/21 samples</span>
       </div>
       <input type="range" id="kslider" min="1" max="21" value="21" step="1" aria-label="samples collected">
       <div class="krange-note" id="knote">the machine's full history</div>
@@ -256,7 +256,7 @@ function setupMachine(){
   else if(m.trained===false){ note.hidden=false;
     note.textContent='The model was never trained on this customer — no customer-specific learning, just general chemistry.'; }
   else note.hidden=true;
-  el('kslider').max=N; el('kslider').value=state.k; el('kmax').textContent="/ "+N;
+  el('kslider').max=N; el('kslider').value=state.k;
 }
 
 /* ---------- controls ---------- */
@@ -350,9 +350,10 @@ function flagsOf(sc){
 /* ---------- render ---------- */
 function render(){
   const sc=scenario(), N=Nof();
-  el('kval').textContent=state.k;
-  el('knote').textContent = state.k>=N ? "the machine's full history"
-    : state.k===1 ? "a single first sample" : `${state.k} of ${N} samples (earliest first)`;
+  el('khist').innerHTML = `Asset history: <b>${state.k}</b>/${N} samples`;
+  el('knote').textContent = state.k>=N ? "its full recorded history"
+    : state.k===1 ? "just the first sample — no trend yet"
+    : "earliest samples first — the history the model learns from";
   [...testsUl.children].forEach((li,i)=>li.classList.toggle('off',!((state.mask>>i)&1)));
 
   const score=trustScore(sc.cov), v=verdictOf(score);
