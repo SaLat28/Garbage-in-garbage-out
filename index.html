@@ -83,7 +83,7 @@
   .test.off .tx .t{color:var(--muted);font-weight:500}
   .test.off .tx .t::after{content:" — skipped";color:var(--bad);font-weight:600;font-size:11px}
   .allrow{border-bottom:1px solid var(--hair);border-radius:0;margin-bottom:4px}
-  .allrow .t{font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
+  .allrow .t{font-weight:700;color:var(--ink-2);font-size:11.5px}
 
   .panel h2.scen{color:var(--ink);font-size:14px;text-transform:none;letter-spacing:0;
     font-family:var(--sans);font-weight:750;margin:22px 0 10px}
@@ -171,7 +171,7 @@
 
       <h2 class="scen">Samples collected</h2>
       <div class="krow">
-        <span class="lab" id="khist">Asset history: <b>21</b>/21 samples</span>
+        <span class="lab" id="khist"><b>21</b>/21 samples</span>
       </div>
       <input type="range" id="kslider" min="1" max="21" value="21" step="1" aria-label="samples collected">
 
@@ -364,7 +364,7 @@ function flagsOf(sc){
 /* ---------- render ---------- */
 function render(){
   const sc=scenario(), N=Nof();
-  el('khist').innerHTML = `Asset history: <b>${state.k}</b>/${N} samples`;
+  el('khist').innerHTML = `<b>${state.k}</b>/${N} samples`;
   [...testsUl.children].forEach((li,i)=>li.classList.toggle('off',!((state.mask>>i)&1)));
   syncAll();
 
