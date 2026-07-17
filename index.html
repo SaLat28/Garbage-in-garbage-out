@@ -71,7 +71,6 @@
   .krow .val{font-family:var(--mono);font-weight:650;font-size:15px}
   .krow .val b{color:var(--accent);font-size:20px}
   input[type=range]{width:100%;accent-color:var(--accent);height:26px;cursor:pointer}
-  .krange-note{font-size:11.5px;color:var(--muted);margin-top:2px}
 
   /* toggles */
   .tests{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
@@ -175,7 +174,6 @@
         <span class="lab" id="khist">Asset history: <b>21</b>/21 samples</span>
       </div>
       <input type="range" id="kslider" min="1" max="21" value="21" step="1" aria-label="samples collected">
-      <div class="krange-note" id="knote">the machine's full history</div>
 
       <h2 class="scen">Lab tests run on each sample</h2>
       <label class="test allrow">
@@ -367,9 +365,6 @@ function flagsOf(sc){
 function render(){
   const sc=scenario(), N=Nof();
   el('khist').innerHTML = `Asset history: <b>${state.k}</b>/${N} samples`;
-  el('knote').textContent = state.k>=N ? "its full recorded history"
-    : state.k===1 ? "just the first sample — no trend yet"
-    : "earliest samples first — the history the model learns from";
   [...testsUl.children].forEach((li,i)=>li.classList.toggle('off',!((state.mask>>i)&1)));
   syncAll();
 
