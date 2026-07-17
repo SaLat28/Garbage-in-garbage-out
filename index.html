@@ -83,6 +83,8 @@
   .test .tx .d{font-size:11.5px;color:var(--muted);line-height:1.3}
   .test.off .tx .t{color:var(--muted);font-weight:500}
   .test.off .tx .t::after{content:" — skipped";color:var(--bad);font-weight:600;font-size:11px}
+  .allrow{border-bottom:1px solid var(--hair);border-radius:0;margin-bottom:4px}
+  .allrow .t{font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
 
   .panel h2.scen{color:var(--ink);font-size:14px;text-transform:none;letter-spacing:0;
     font-family:var(--sans);font-weight:750;margin:22px 0 10px}
@@ -176,6 +178,10 @@
       <div class="krange-note" id="knote">the machine's full history</div>
 
       <h2 class="scen">Lab tests run on each sample</h2>
+      <label class="test allrow">
+        <input type="checkbox" id="allbox" checked aria-label="select or deselect all tests">
+        <span class="tx"><span class="t">Select / deselect all</span></span>
+      </label>
       <ul class="tests" id="tests"></ul>
     </aside>
 
@@ -271,6 +277,16 @@ DATA.groups.forEach((g,i)=>{
   });
   testsUl.appendChild(li);
 });
+const allbox=el('allbox');
+allbox.addEventListener('change',e=>{
+  state.mask = e.target.checked ? (1<<NG)-1 : 0;   // all tests on / off
+  state.preset=null; applyState(); render();
+});
+function syncAll(){
+  let on=0; for(let i=0;i<NG;i++) if((state.mask>>i)&1) on++;
+  allbox.checked = on===NG;
+  allbox.indeterminate = on>0 && on<NG;             // partial selection
+}
 
 const mtabs=el('mtabs');
 DATA.metrics.forEach((m,i)=>{
@@ -355,6 +371,7 @@ function render(){
     : state.k===1 ? "just the first sample — no trend yet"
     : "earliest samples first — the history the model learns from";
   [...testsUl.children].forEach((li,i)=>li.classList.toggle('off',!((state.mask>>i)&1)));
+  syncAll();
 
   const score=trustScore(sc.cov), v=verdictOf(score);
   const vd=el('verdict'); vd.className='verdict '+v.c;
