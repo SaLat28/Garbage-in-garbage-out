@@ -171,7 +171,7 @@
 
       <h2 class="scen">Samples collected</h2>
       <div class="krow">
-        <span class="lab" id="khist"><b>21</b>/21 samples</span>
+        <span class="lab" id="khist">Asset history: <b>21</b>/21 samples</span>
       </div>
       <input type="range" id="kslider" min="1" max="21" value="21" step="1" aria-label="samples collected">
 
@@ -364,7 +364,7 @@ function flagsOf(sc){
 /* ---------- render ---------- */
 function render(){
   const sc=scenario(), N=Nof();
-  el('khist').innerHTML = `<b>${state.k}</b>/${N} samples`;
+  el('khist').innerHTML = `Asset history: <b>${state.k}</b>/${N} samples`;
   [...testsUl.children].forEach((li,i)=>li.classList.toggle('off',!((state.mask>>i)&1)));
   syncAll();
 
