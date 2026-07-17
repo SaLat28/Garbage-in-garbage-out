@@ -13,7 +13,7 @@ bands, and a live **trust verdict** degrade as inputs go missing.
 ## Live site
 
 Once GitHub Pages is enabled (Settings → Pages → Deploy from `main` / root):
-`https://SaLat28.github.io/garbage-in-garbage-out/`
+`https://salat28.github.io/Garbage-in-garbage-out/`
 
 ## Local
 
