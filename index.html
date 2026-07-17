@@ -303,8 +303,8 @@ const maskOf = tests => tests==='all' ? (1<<NG)-1
 const PRESETS=[
   {n:"Gold standard",k:'max',tests:'all',           c:'#b8860b'},   // gold
   {n:"Routine check",k:8,tests:'all',               c:'#0ca30c'},   // green
-  {n:"Neglected",k:3,tests:['particles','wear'],    c:'#e0691f'},   // orange
-  {n:"Bare minimum",k:1,tests:[],                   c:'#d03b3b'},   // red
+  {n:"Neglected",k:5,tests:['particles','wear'],    c:'#e0691f'},   // orange
+  {n:"Bare minimum",k:2,tests:[],                   c:'#d03b3b'},   // red
 ];
 const pv=el('presets');
 PRESETS.forEach((p,idx)=>{
