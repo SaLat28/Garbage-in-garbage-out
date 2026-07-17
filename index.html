@@ -214,6 +214,24 @@
             <span>○ what actually happened</span>
           </div>
         </div>
+        <div class="chart card">
+          <p class="ct">What each lab test is worth</p>
+          <p class="cs">How the 1-year survival estimate shifts when each test is withheld from the full panel (at the current sample count)</p>
+          <svg id="testchart" viewBox="0 0 400 240" role="img" aria-label="value of each lab test"></svg>
+          <div class="legend">
+            <span><i class="k" style="background:var(--bad)"></i>test reveals risk (removing it looks healthier)</span>
+            <span><i class="k" style="background:var(--good)"></i>test adds reassurance</span>
+          </div>
+        </div>
+        <div class="chart card">
+          <p class="ct">Forecast uncertainty vs data completeness</p>
+          <p class="cs" id="uncsub">Width of the 10–90% band as lab tests are added</p>
+          <svg id="uncchart" viewBox="0 0 400 240" role="img" aria-label="uncertainty vs completeness"></svg>
+          <div class="legend">
+            <span><i class="k" id="lgk3" style="background:var(--accent)"></i>band width</span>
+            <span>◆ this scenario</span>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -287,7 +305,7 @@ function syncAll(){
 const mtabs=el('mtabs');
 DATA.metrics.forEach((m,i)=>{
   const b=document.createElement('button'); b.className='tab'+(i===0?' on':''); b.type='button';
-  b.textContent=m.label; b.addEventListener('click',()=>{state.metric=i;syncTabs();drawForecast();});
+  b.textContent=m.label; b.addEventListener('click',()=>{state.metric=i;syncTabs();drawForecast();drawUncertainty();});
   mtabs.appendChild(b);
 });
 function syncTabs(){[...mtabs.children].forEach((b,i)=>b.classList.toggle('on',i===state.metric));}
@@ -387,7 +405,7 @@ function render(){
     fl.appendChild(li);
   });
   syncPresets();
-  drawSurvival(sc); drawForecast();
+  drawSurvival(sc); drawForecast(); drawTestValue(); drawUncertainty();
 }
 
 /* ---------- SVG helpers ---------- */
@@ -497,6 +515,71 @@ function drawForecast(){
   }
 }
 function diamond(x,y,r){return `M${x} ${y-r}L${x+r} ${y}L${x} ${y+r}L${x-r} ${y}Z`;}
+const popcount=x=>{let c=0;while(x){c+=x&1;x>>>=1;}return c;};
+const GSHORT={particles:'Particles',wear:'Wear metals',additive:'Additives',contam:'Contaminants',
+  tan:'TAN',varnish:'Varnish (MPC)',physical:'Viscosity/water'};
+
+// "What each lab test is worth" — how the 1-yr survival estimate shifts when each
+// test group is withheld from the full panel, at the current sample count.
+function drawTestValue(){
+  const s=el('testchart'); clear(s);
+  const full=(1<<NG)-1, k=state.k, S=M().scenarios, li=H.length-1;
+  const base=S[k+"_"+full].s[li];
+  const rows=DATA.groups.map((g,i)=>({
+    label:GSHORT[g.key]||g.key,
+    delta:(base - S[k+"_"+(full & ~(1<<i))].s[li])*100        // signed percentage points
+  })).sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta));
+  const W=400,Hh=240,ml=104,mr=30,mt=12,mb=8, yh=Hh-mt-mb, span=W-ml-mr-24;
+  const maxd=Math.max(3, ...rows.map(r=>Math.abs(r.delta)));
+  const rh=yh/rows.length, bh=Math.min(15,rh*0.55);
+  const good=cvar('--good'), bad=cvar('--bad');
+  s.appendChild(svgEl('line',{x1:ml,y1:mt,x2:ml,y2:mt+yh,stroke:cvar('--grid'),'stroke-width':1}));
+  rows.forEach((r,i)=>{
+    const cy=mt+rh*i+rh/2, w=Math.abs(r.delta)/maxd*span, col=r.delta>=0?bad:good;
+    s.appendChild(svgEl('rect',{x:ml,y:cy-bh/2,width:Math.max(1.5,w),height:bh,rx:2,fill:col,opacity:.85}));
+    const lab=svgEl('text',{x:ml-6,y:cy+3.5,'text-anchor':'end','font-size':10.5,
+      fill:cvar('--ink-2')}); lab.textContent=r.label; s.appendChild(lab);
+    const val=svgEl('text',{x:ml+w+5,y:cy+3.5,'font-size':10,'font-weight':700,fill:col,
+      'font-family':'var(--mono)'}); val.textContent=(r.delta>=0?'+':'')+r.delta.toFixed(0); s.appendChild(val);
+  });
+}
+
+// "Forecast uncertainty vs data completeness" — mean 10-90% band width for the
+// current metric as a function of how many lab tests are present, with a marker at
+// the current scenario. More complete data -> tighter forecast.
+function drawUncertainty(){
+  const s=el('uncchart'); clear(s);
+  const m=DATA.metrics[state.metric], k=state.k, S=M().scenarios;
+  const grpOn=(state.mask>>m.group)&1;
+  el('uncsub').textContent=`Width of the 10–90% band for ${m.label} as lab tests are added`
+    +(grpOn?'':' (its own test is off)');
+  const sums=new Array(NG+1).fill(0), cnts=new Array(NG+1).fill(0);
+  for(let mask=0;mask<(1<<NG);mask++){
+    const pc=popcount(mask), fc=S[k+"_"+mask].f[m.key];
+    sums[pc]+=(fc[2]-fc[1]); cnts[pc]++;
+  }
+  const mean=sums.map((v,i)=>cnts[i]?v/cnts[i]:0);
+  const W=400,Hh=240,ml=42,mr=16,mt=16,mb=30, xw=W-ml-mr, yh=Hh-mt-mb;
+  const ymax=Math.max(...mean,0.001)*1.15;
+  const X=c=>ml+xw*c/NG, Y=v=>mt+yh*(1-Math.min(v,ymax)/ymax);
+  for(let g=0;g<=4;g++){const yv=ymax*g/4;
+    s.appendChild(svgEl('line',{x1:ml,y1:Y(yv),x2:W-mr,y2:Y(yv),stroke:cvar('--grid'),'stroke-width':1}));
+    s.appendChild(svgEl('text',{x:ml-6,y:Y(yv)+3,'text-anchor':'end','font-size':9,fill:cvar('--muted'),
+      'font-family':'var(--mono)'})).textContent=yv.toFixed(ymax<3?1:0);
+  }
+  for(let c=0;c<=NG;c++) s.appendChild(svgEl('text',{x:X(c),y:Hh-12,'text-anchor':'middle','font-size':9,
+    fill:cvar('--muted'),'font-family':'var(--mono)'})).textContent=c;
+  s.appendChild(svgEl('text',{x:ml+xw/2,y:Hh-1,'text-anchor':'middle','font-size':9,
+    fill:cvar('--muted')})).textContent='lab tests run';
+  const col=cvar('--accent');
+  let d=''; for(let c=0;c<=NG;c++) d+=(c?'L':'M')+X(c)+' '+Y(mean[c]);
+  s.appendChild(svgEl('path',{d,fill:'none',stroke:col,'stroke-width':2.4,
+    'stroke-linejoin':'round','stroke-linecap':'round'}));
+  for(let c=0;c<=NG;c++) s.appendChild(svgEl('circle',{cx:X(c),cy:Y(mean[c]),r:2.5,fill:col}));
+  const fcNow=S[k+"_"+state.mask].f[m.key], wNow=fcNow[2]-fcNow[1];
+  s.appendChild(svgEl('path',{d:diamond(X(popcount(state.mask)),Y(wNow),5.5),
+    fill:cvar('--surface'),stroke:col,'stroke-width':2}));
+}
 
 /* ---------- theme toggle ---------- */
 el('themebtn').addEventListener('click',()=>{
