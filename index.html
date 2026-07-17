@@ -31,10 +31,9 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
-    line-height:1.45;-webkit-font-smoothing:antialiased;
-    display:flex;align-items:center;justify-content:center;min-height:100vh;padding:8px}
-  /* fixed 1280x720 canvas — everything lives inside, nothing scrolls the page */
-  .wrap{width:1280px;height:720px;flex:none;padding:12px 18px 14px;position:relative;
+    line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden}
+  /* fill the viewport — everything lives inside, nothing scrolls the page */
+  .wrap{width:100vw;height:100vh;padding:14px 20px 16px;position:relative;
     display:flex;flex-direction:column;overflow:hidden}
   header.top{flex:none;margin-bottom:8px}
   h1{font-size:18px;line-height:1.15;margin:0;font-weight:750;letter-spacing:-.01em}
@@ -112,8 +111,9 @@
   .meter{height:7px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin-top:6px}
   .meter i{display:block;height:100%;border-radius:6px;transition:width .3s,background .3s}
 
+  /* fixed reserved strip: warnings scroll inside it and never squeeze the charts below */
   .flags{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;
-    flex:none;max-height:96px;overflow-y:auto}
+    flex:none;height:92px;overflow-y:auto}
   .flag{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--ink-2);
     padding:5px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--hair)}
   .flag .dot{flex:none;width:9px;height:9px;border-radius:50%;margin-top:5px}
