@@ -83,11 +83,14 @@
   .test.off .tx .t{color:var(--muted);font-weight:500}
   .test.off .tx .t::after{content:" — skipped";color:var(--bad);font-weight:600;font-size:11px}
 
+  .panel h2.scen{color:var(--ink);font-size:14px;text-transform:none;letter-spacing:0;
+    font-family:var(--sans);font-weight:750;margin:0 0 10px}
   .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
-  .preset{font-family:var(--mono);font-size:11.5px;padding:6px 10px;border-radius:999px;
-    border:1px solid var(--line);background:transparent;color:var(--ink-2);cursor:pointer;
-    transition:.12s}
-  .preset:hover{border-color:var(--accent);color:var(--accent)}
+  .preset{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:6px 10px;
+    border-radius:999px;border:1px solid var(--pc,var(--line));background:transparent;
+    color:var(--pc,var(--ink-2));cursor:pointer;transition:.12s}
+  .preset:hover{box-shadow:inset 0 0 0 1px var(--pc,var(--accent))}
+  .preset.on{background:var(--pc,var(--accent));border-color:var(--pc,var(--accent));color:#fff}
 
   /* verdict */
   .verdict{padding:16px 18px;display:flex;gap:16px;align-items:center;border-radius:14px;
@@ -153,7 +156,7 @@
 
   <div class="grid">
     <aside class="panel card">
-      <h2>Quick scenarios</h2>
+      <h2 class="scen">Make your scenario</h2>
       <div class="presets" id="presets"></div>
 
       <h2 class="sub">Asset</h2>
@@ -227,7 +230,7 @@ const H = DATA.horizons, NG = DATA.groups.length;
 const GB = {}; DATA.groups.forEach((g,i)=>GB[g.key]=i);   // group key -> bit index
 const nearest = (list,v) => list.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a);
 const el = id => document.getElementById(id);
-let state = { machine:DATA.default_machine, k:1, mask:(1<<NG)-1, metric:0 };
+let state = { machine:DATA.default_machine, k:1, mask:(1<<NG)-1, metric:0, preset:null };
 const M = () => DATA.machines[state.machine];
 const Nof = () => M().n;
 state.k = nearest(M().ks, Nof());
@@ -241,6 +244,7 @@ Object.keys(DATA.machines).forEach(id=>{
 mpick.addEventListener('change',e=>{
   state.machine=e.target.value;
   state.k=nearest(M().ks, Math.min(state.k,Nof()));   // snap to this asset's counts
+  state.preset=null;                                  // switching asset leaves the preset scenario
   setupMachine(); render();
 });
 function setupMachine(){
@@ -262,7 +266,7 @@ DATA.groups.forEach((g,i)=>{
     <span class="tx"><span class="t">${g.label}</span></span>`;
   li.querySelector('input').addEventListener('change',e=>{
     if(e.target.checked) state.mask|=(1<<i); else state.mask&=~(1<<i);
-    render();
+    state.preset=null; render();          // manual edit → no longer a preset scenario
   });
   testsUl.appendChild(li);
 });
@@ -278,23 +282,26 @@ function syncTabs(){[...mtabs.children].forEach((b,i)=>b.classList.toggle('on',i
 const maskOf = tests => tests==='all' ? (1<<NG)-1
   : tests.reduce((m,key)=>(key in GB ? m|(1<<GB[key]) : m), 0);
 const PRESETS=[
-  {n:"Gold standard",k:'max',tests:'all'},
-  {n:"Routine (quarterly, full panel)",k:8,tests:'all'},
-  {n:"Neglected",k:3,tests:['particles','wear']},
-  {n:"Bare minimum",k:1,tests:[]},
+  {n:"Gold standard",k:'max',tests:'all',           c:'#b8860b'},   // gold
+  {n:"Routine check",k:8,tests:'all',               c:'#0ca30c'},   // green
+  {n:"Neglected",k:3,tests:['particles','wear'],    c:'#e0691f'},   // orange
+  {n:"Bare minimum",k:1,tests:[],                   c:'#d03b3b'},   // red
 ];
 const pv=el('presets');
-PRESETS.forEach(p=>{
+PRESETS.forEach((p,idx)=>{
   const b=document.createElement('button'); b.className='preset'; b.type='button'; b.textContent=p.n;
+  b.style.setProperty('--pc', p.c);
   b.addEventListener('click',()=>{
+    state.preset = idx;                   // remember the chosen scenario so it stays highlighted
     state.k = nearest(M().ks, p.k==='max'?Nof():p.k);
     state.mask = maskOf(p.tests);
     applyState(); render();
   });
   pv.appendChild(b);
 });
+function syncPresets(){ [...pv.children].forEach((b,i)=>b.classList.toggle('on', i===state.preset)); }
 el('kslider').addEventListener('input',e=>{ state.k=nearest(M().ks,+e.target.value);
-  e.target.value=state.k; render(); });
+  e.target.value=state.k; state.preset=null; render(); });   // manual slider → clear preset highlight
 function applyState(){
   el('kslider').value=state.k;
   [...testsUl.children].forEach((li,i)=>{
@@ -361,6 +368,7 @@ function render(){
     li.innerHTML=`<span class="dot"></span><span><b>${head}</b> ${body}</span>`;
     fl.appendChild(li);
   });
+  syncPresets();
   drawSurvival(sc); drawForecast();
 }
 
