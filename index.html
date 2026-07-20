@@ -32,7 +32,7 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
     line-height:1.45;-webkit-font-smoothing:antialiased;
-    display:flex;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+    display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:8px}
   /* fixed 1280x900 canvas — everything lives inside, nothing scrolls the page */
   .wrap{width:1280px;height:900px;flex:none;padding:12px 18px 14px;position:relative;
     display:flex;flex-direction:column;overflow:hidden}
@@ -45,8 +45,14 @@
 
   .card{background:var(--surface);border:1px solid var(--hair);border-radius:14px;
     box-shadow:var(--shadow)}
-  aside.panel{padding:12px 13px;overflow-y:auto;min-height:0}
+  aside.panel{padding:12px 13px;overflow-y:auto;min-height:0;display:flex;flex-direction:column}
   .grid>section{min-height:0;display:flex;flex-direction:column;gap:9px}
+  /* bottom-left "how to read" guide — small, light, non-invasive */
+  .guide{margin-top:auto;padding-top:11px;border-top:1px solid var(--hair);color:var(--muted)}
+  .guide .gh{font-size:10px;font-weight:600;letter-spacing:.02em;margin:0 0 4px;color:var(--muted)}
+  .guide ul{margin:0;padding-left:15px;list-style:disc}
+  .guide li{font-size:10px;line-height:1.35;margin:2px 0}
+  .guide li b{color:var(--ink-2);font-weight:700}
   .panel h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
     font-family:var(--mono);font-weight:600;margin:0 0 14px}
   .panel .sub{margin:22px 0 12px}
@@ -178,6 +184,16 @@
         <span class="tx"><span class="t">Select / deselect all</span></span>
       </label>
       <ul class="tests" id="tests"></ul>
+
+      <div class="guide">
+        <p class="gh">How to read the charts</p>
+        <ul>
+          <li><b>①</b> Fluid survival forecast — chance the oil is still healthy over the next year.</li>
+          <li><b>②</b> Next-sample forecast — the model's predicted next lab reading with its 10–90% band.</li>
+          <li><b>③</b> What each lab test is worth — how much each test moves the survival estimate (green raises, red lowers).</li>
+          <li><b>④</b> Forecast uncertainty vs completeness — the band narrows as more lab tests are run.</li>
+        </ul>
+      </div>
     </aside>
 
     <section>
@@ -193,7 +209,7 @@
 
       <div class="charts">
         <div class="chart card">
-          <p class="ct">Fluid survival forecast</p>
+          <p class="ct">① Fluid survival forecast</p>
           <p class="cs">Chance the oil is still healthy over the next year (higher = better)</p>
           <svg id="survchart" viewBox="0 0 400 240" role="img" aria-label="survival forecast"></svg>
           <div class="legend">
@@ -201,7 +217,7 @@
           </div>
         </div>
         <div class="chart card">
-          <p class="ct">Next-sample forecast <span class="stat" id="fcband"></span></p>
+          <p class="ct">② Next-sample forecast <span class="stat" id="fcband"></span></p>
           <p class="cs" id="fcsub">Predicted next reading with the model's 10–90% band</p>
           <div class="tabs" id="mtabs"></div>
           <svg id="fcchart" viewBox="0 0 400 240" role="img" aria-label="metric forecast"></svg>
@@ -212,7 +228,7 @@
           </div>
         </div>
         <div class="chart card">
-          <p class="ct">What each lab test is worth</p>
+          <p class="ct">③ What each lab test is worth</p>
           <p class="cs">How much each lab test moves the 1-year survival estimate, vs the full panel (at the current sample count)</p>
           <svg id="testchart" viewBox="0 0 400 240" role="img" aria-label="value of each lab test"></svg>
           <div class="legend">
@@ -221,7 +237,7 @@
           </div>
         </div>
         <div class="chart card">
-          <p class="ct">Forecast uncertainty vs data completeness</p>
+          <p class="ct">④ Forecast uncertainty vs data completeness</p>
           <p class="cs" id="uncsub">Width of the 10–90% band as lab tests are added</p>
           <svg id="uncchart" viewBox="0 0 400 240" role="img" aria-label="uncertainty vs completeness"></svg>
           <div class="legend">
