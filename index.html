@@ -38,7 +38,7 @@
     display:flex;flex-direction:column;overflow:hidden}
   header.top{flex:none;margin-bottom:8px}
   h1{font-size:27px;line-height:1.12;margin:0;font-weight:750;letter-spacing:-.015em}
-  .lede{font-size:12px;color:var(--ink-2);margin:3px 0 0;line-height:1.3;max-width:118ch}
+  .lede{font-size:12px;color:var(--ink-2);margin:11px 0 0;line-height:1.35;max-width:118ch}
   .lede b{color:var(--ink);font-weight:650}
 
   .grid{flex:1;min-height:0;display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:stretch}
@@ -94,7 +94,7 @@
     font-family:var(--sans);font-weight:750;margin:12px 0 6px}
   .panel h2.scen:first-child{margin-top:0}
   .presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-  .scendesc{font-size:11px;color:var(--ink-2);line-height:1.35;margin:9px 0 2px;min-height:3.4em}
+  .scendesc{font-size:11px;color:var(--ink-2);line-height:1.35;margin:9px 0 14px;min-height:3.4em}
   .preset{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:6px 10px;
     border-radius:999px;border:1px solid var(--pc,var(--line));background:transparent;
     color:var(--pc,var(--ink-2));cursor:pointer;transition:.12s}
@@ -158,7 +158,8 @@
   <header class="top">
     <h1>Garbage in, garbage out — build the dataset, watch the forecast</h1>
     <p class="lede">Pick an asset, then strip its data down — take fewer oil samples, skip lab tests — and
-      watch the <b>same trained model</b> try to forecast it. The right-hand panel shows how far you can trust the result.</p>
+      watch the <b>same trained model</b> try to forecast it. The right-hand panel shows how far you can trust the result.
+      Every asset here uses <b>invented, synthetic data</b> — no real customer information is shown.</p>
   </header>
 
   <div class="grid">
@@ -172,7 +173,6 @@
       <div class="machine">
         <span class="fl" id="mfl"></span>
       </div>
-      <div class="synthnote" id="synthnote" hidden></div>
 
       <h2 class="scen">Samples collected</h2>
       <div class="krow">
@@ -268,12 +268,8 @@ mpick.addEventListener('change',e=>{
   setupMachine(); render();
 });
 function setupMachine(){
-  const m=M(), N=Nof(), note=el('synthnote');
+  const m=M(), N=Nof();
   el('mfl').textContent=m.fluid+" · "+m.customer;
-  if(m.synthetic){ note.hidden=false; note.textContent='Invented data for demonstration — not a real unit.'; }
-  else if(m.trained===false){ note.hidden=false;
-    note.textContent='The model was never trained on this customer — no customer-specific learning, just general chemistry.'; }
-  else note.hidden=true;
   el('kslider').max=N; el('kslider').value=state.k;
 }
 
