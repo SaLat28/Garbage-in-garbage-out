@@ -213,11 +213,11 @@
         </div>
         <div class="chart card">
           <p class="ct">What each lab test is worth</p>
-          <p class="cs">How the 1-year survival estimate shifts when each test is withheld from the full panel (at the current sample count)</p>
+          <p class="cs">How much each lab test moves the 1-year survival estimate, vs the full panel (at the current sample count)</p>
           <svg id="testchart" viewBox="0 0 400 240" role="img" aria-label="value of each lab test"></svg>
           <div class="legend">
-            <span><i class="k" style="background:var(--bad)"></i>test reveals risk (removing it looks healthier)</span>
-            <span><i class="k" style="background:var(--good)"></i>test adds reassurance</span>
+            <span><i class="k" style="background:var(--good)"></i>raises the estimate (readings look healthy)</span>
+            <span><i class="k" style="background:var(--bad)"></i>lowers the estimate (flags a problem)</span>
           </div>
         </div>
         <div class="chart card">
@@ -524,7 +524,7 @@ function drawTestValue(){
   const good=cvar('--good'), bad=cvar('--bad');
   s.appendChild(svgEl('line',{x1:ml,y1:mt,x2:ml,y2:mt+yh,stroke:cvar('--grid'),'stroke-width':1}));
   rows.forEach((r,i)=>{
-    const cy=mt+rh*i+rh/2, w=Math.abs(r.delta)/maxd*span, col=r.delta>=0?bad:good;
+    const cy=mt+rh*i+rh/2, w=Math.abs(r.delta)/maxd*span, col=r.delta>=0?good:bad;
     s.appendChild(svgEl('rect',{x:ml,y:cy-bh/2,width:Math.max(1.5,w),height:bh,rx:2,fill:col,opacity:.85}));
     const lab=svgEl('text',{x:ml-6,y:cy+3.5,'text-anchor':'end','font-size':10.5,
       fill:cvar('--ink-2')}); lab.textContent=r.label; s.appendChild(lab);
