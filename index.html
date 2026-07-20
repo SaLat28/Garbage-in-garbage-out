@@ -37,7 +37,7 @@
   .wrap{width:1280px;height:900px;flex:none;padding:12px 18px 14px;position:relative;
     display:flex;flex-direction:column;overflow:hidden}
   header.top{flex:none;margin-bottom:8px}
-  h1{font-size:18px;line-height:1.15;margin:0;font-weight:750;letter-spacing:-.01em}
+  h1{font-size:27px;line-height:1.12;margin:0;font-weight:750;letter-spacing:-.015em}
   .lede{font-size:12px;color:var(--ink-2);margin:3px 0 0;line-height:1.3;max-width:118ch}
   .lede b{color:var(--ink);font-weight:650}
 
@@ -94,6 +94,7 @@
     font-family:var(--sans);font-weight:750;margin:12px 0 6px}
   .panel h2.scen:first-child{margin-top:0}
   .presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .scendesc{font-size:11px;color:var(--ink-2);line-height:1.35;margin:9px 0 2px;min-height:3.4em}
   .preset{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:6px 10px;
     border-radius:999px;border:1px solid var(--pc,var(--line));background:transparent;
     color:var(--pc,var(--ink-2));cursor:pointer;transition:.12s}
@@ -164,6 +165,7 @@
     <aside class="panel card">
       <h2 class="scen">Make your scenario</h2>
       <div class="presets" id="presets"></div>
+      <p class="scendesc" id="scendesc"></p>
 
       <h2 class="scen">Asset</h2>
       <select class="mpick" id="mpick" aria-label="choose an asset"></select>
@@ -188,10 +190,10 @@
       <div class="guide">
         <p class="gh">How to read the charts</p>
         <ul>
-          <li><b>①</b> Fluid survival forecast — chance the oil is still healthy over the next year.</li>
-          <li><b>②</b> Next-sample forecast — the model's predicted next lab reading with its 10–90% band.</li>
-          <li><b>③</b> Chance the oil is still healthy — at 3, 6 and 12 months (green = good, red = act).</li>
-          <li><b>④</b> How this asset compares — its 1-year health next to the other demo assets.</li>
+          <li><b>I.</b> Fluid survival forecast — chance the oil is still healthy over the next year.</li>
+          <li><b>II.</b> Next-sample forecast — the model's predicted next lab reading with its 10–90% band.</li>
+          <li><b>III.</b> Chance the oil is still healthy — at 3, 6 and 12 months (green = good, red = act).</li>
+          <li><b>IV.</b> How this asset compares — its 1-year health next to the other demo assets.</li>
         </ul>
       </div>
     </aside>
@@ -209,7 +211,7 @@
 
       <div class="charts">
         <div class="chart card">
-          <p class="ct">① Fluid survival forecast</p>
+          <p class="ct">I. Fluid survival forecast</p>
           <p class="cs">Chance the oil is still healthy over the next year (higher = better)</p>
           <svg id="survchart" viewBox="0 0 400 240" role="img" aria-label="survival forecast"></svg>
           <div class="legend">
@@ -217,7 +219,7 @@
           </div>
         </div>
         <div class="chart card">
-          <p class="ct">② Next-sample forecast <span class="stat" id="fcband"></span></p>
+          <p class="ct">II. Next-sample forecast <span class="stat" id="fcband"></span></p>
           <p class="cs" id="fcsub">Predicted next reading with the model's 10–90% band</p>
           <div class="tabs" id="mtabs"></div>
           <svg id="fcchart" viewBox="0 0 400 240" role="img" aria-label="metric forecast"></svg>
@@ -228,12 +230,12 @@
           </div>
         </div>
         <div class="chart card">
-          <p class="ct">③ Chance the oil is still healthy</p>
+          <p class="ct">III. Chance the oil is still healthy</p>
           <p class="cs">At 3, 6 and 12 months from now — a longer, greener bar is better</p>
           <svg id="mschart" viewBox="0 0 400 240" role="img" aria-label="chance healthy at milestones"></svg>
         </div>
         <div class="chart card">
-          <p class="ct">④ How this asset compares</p>
+          <p class="ct">IV. How this asset compares</p>
           <p class="cs">1-year chance of staying healthy, next to the other demo assets (same data settings)</p>
           <svg id="fleetchart" viewBox="0 0 400 240" role="img" aria-label="comparison to other assets"></svg>
         </div>
@@ -309,10 +311,14 @@ function syncTabs(){[...mtabs.children].forEach((b,i)=>b.classList.toggle('on',i
 const maskOf = tests => tests==='all' ? (1<<NG)-1
   : tests.reduce((m,key)=>(key in GB ? m|(1<<GB[key]) : m), 0);
 const PRESETS=[
-  {n:"Gold standard",k:'max',tests:'all',           c:'#b8860b'},   // gold
-  {n:"Routine check",k:8,tests:'all',               c:'#0ca30c'},   // green
-  {n:"Neglected",k:5,tests:['particles','wear'],    c:'#e0691f'},   // orange
-  {n:"Bare minimum",k:2,tests:[],                   c:'#d03b3b'},   // red
+  {n:"Gold standard",k:'max',tests:'all',           c:'#b8860b',   // gold
+   d:"Gold standard: every ICP element analysed — plus acid number (TAN), varnish (MPC) and particle counts — on samples taken consistently across the asset's full history. The model has everything it needs."},
+  {n:"Routine check",k:8,tests:'all',               c:'#0ca30c',   // green
+   d:"Routine check: the full lab panel run, but on a shorter recent window of about 8 samples. A dependable read, if not the deepest trend."},
+  {n:"Neglected",k:5,tests:['particles','wear'],    c:'#e0691f',   // orange
+   d:"Neglected: only wear metals and particle counts, on just a few samples. Oil chemistry (TAN, additives, viscosity) is unmeasured and the trend is thin."},
+  {n:"Bare minimum",k:2,tests:[],                   c:'#d03b3b',   // red
+   d:"Bare minimum: a couple of samples and no lab tests at all — the model has almost nothing to go on and falls back on population averages."},
 ];
 const pv=el('presets');
 PRESETS.forEach((p,idx)=>{
@@ -326,7 +332,11 @@ PRESETS.forEach((p,idx)=>{
   });
   pv.appendChild(b);
 });
-function syncPresets(){ [...pv.children].forEach((b,i)=>b.classList.toggle('on', i===state.preset)); }
+function syncPresets(){
+  [...pv.children].forEach((b,i)=>b.classList.toggle('on', i===state.preset));
+  el('scendesc').textContent = state.preset!=null ? PRESETS[state.preset].d
+    : "Pick a preset above for a ready-made scenario, or build your own with the controls below.";
+}
 el('kslider').addEventListener('input',e=>{ state.k=nearest(M().ks,+e.target.value);
   e.target.value=state.k; state.preset=null; render(); });   // manual slider → clear preset highlight
 function applyState(){
@@ -518,7 +528,7 @@ const GSHORT={particles:'Particles',wear:'Wear metals',additive:'Additives',cont
 
 const survColor=v=> v>=0.7?cvar('--good') : v>=0.4?cvar('--warn') : cvar('--bad');
 
-// ③ "Chance the oil is still healthy" — survival at 3 / 6 / 12 months as big bars.
+// III. "Chance the oil is still healthy" — survival at 3 / 6 / 12 months as big bars.
 function drawMilestones(sc){
   const s=el('mschart'); clear(s);
   const pick=[[2,'3 months'],[3,'6 months'],[5,'12 months']];   // H = [30,60,90,180,270,365]d
@@ -535,7 +545,7 @@ function drawMilestones(sc){
   });
 }
 
-// ④ "How this asset compares" — 1-year survival of every demo asset at the current
+// IV. "How this asset compares" — 1-year survival of every demo asset at the current
 // (samples, tests) settings, current asset highlighted.
 function drawFleet(){
   const s=el('fleetchart'); clear(s);
